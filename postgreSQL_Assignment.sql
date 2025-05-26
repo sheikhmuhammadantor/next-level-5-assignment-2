@@ -1,0 +1,2 @@
+-- Active: 1748008427030@@127.0.0.1@5432@conservation_db@public
+-- DROP TABLE test1_table;
