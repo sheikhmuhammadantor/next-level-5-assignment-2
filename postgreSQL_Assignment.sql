@@ -14,7 +14,7 @@ CREATE TABLE species(
     common_name VARCHAR(30) NOT NULL,
     scientific_name VARCHAR(30) NOT NULL,
     discovery_date DATE NOT NULL,
-    conservation_status VARCHAR(20) NOT NULL CHECK (conservation_status IN ('Endangered', 'Vulnerable', 'Extinct', 'Least Concern'))
+    conservation_status VARCHAR(20) NOT NULL CHECK (conservation_status IN ('Endangered', 'Vulnerable'))
 );
 
 -- Create Sightings Table;
@@ -64,3 +64,29 @@ SELECT * FROM sightings
 WHERE location LIKE '%Pass%';
 
 -- Problem 4
+SELECT name, count(species_id) as total_sightings FROM rangers
+JOIN sightings USING(ranger_id)
+GROUP BY name;
+
+-- Problem 5
+SELECT common_name FROM species
+LEFT JOIN sightings USING(species_id)
+WHERE sighting_id IS NULL;
+
+-- Problem 6
+SELECT common_name, sighting_time, name FROM sightings
+JOIN rangers USING(ranger_id)
+JOIN species USING(species_id)
+ORDER BY sighting_time DESC LIMIT 2
+
+-- Problem 7
+ALTER TABLE species
+DROP CONSTRAINT species_conservation_status_check;
+
+ALTER TABLE species
+ADD CONSTRAINT species_conservation_status_check
+CHECK (conservation_status IN ('Endangered', 'Vulnerable', 'Historic'));
+
+UPDATE species
+SET conservation_status = 'Historic'
+WHERE extract(YEAR FROM discovery_date) < 1800;
